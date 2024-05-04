@@ -15,8 +15,8 @@
   </ion-header> -->
 
   @if (prize) {
-  <ion-row>
-    <ion-col size="4" offset="4">
+  <ion-row class="ion-justify-content-center">
+    <ion-col size="12" sizeMd="6" sizeLg="4">
       <ion-card>
         <ion-card-header class="ion-text-center">
           <ion-card-title color="primary">
@@ -33,13 +33,13 @@
   }
   <ion-row>
     @for (prize of runningNumbers; track prize.id) {
-    <ion-col>
+    <ion-col size="12" sizeMd="6" sizeLg="4">
       <ion-card>
         <ion-card-header class="ion-text-center">
           <ion-card-title color="secondary">
-            <ion-row>
+            <ion-row class="ion-justify-content-around">
               @for (number of prize.number; track 'r_number'+$index) {
-              <ion-col>
+              <ion-col size="6">
                 <ion-text>{{number}}</ion-text>
               </ion-col>
               }
@@ -56,13 +56,13 @@
   </ion-row>
   @for (prize of prizes; track prize.id) {
   <ion-row>
-    <ion-col>
+    <ion-col size="12">
       <ion-card>
         <ion-card-header class="ion-text-center">
           <ion-card-title color="tertiary">
-            <ion-row>
+            <ion-row class="ion-justify-content-around">
               @for (number of prize.number; track 'p_number'+$index) {
-              <ion-col size="2">
+              <ion-col size="auto" style="min-width: 20%;">
                 <ion-text>{{number}}</ion-text>
               </ion-col>
               }
