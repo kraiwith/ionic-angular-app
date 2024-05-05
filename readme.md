@@ -31,9 +31,11 @@ Start the server
 ## Features
 
 - Result latest award
+- Inputs check award
 
 ## Roadmap
 
-- Inputs check award
 - Light/dark mode toggle
+- Todo list
+- Notes
 - SMS fast forwards

@@ -1,0 +1,33 @@
+@if (prize) {
+<ion-card>
+  <ion-card-header class="ion-text-center">
+    <ion-card-title [color]="color">
+      @if (prize.number.length <= 2) { <ion-row class="ion-justify-content-around">
+        @for (number of prize.number; track 'p_number'+$index) {
+        <ion-col size="auto" class="prize-col">
+          <div #ref>
+            <ng-content [select]="prize"></ng-content>
+          </div>
+          @if (!ref.children.length) {
+          {{number}}
+          }
+        </ion-col>
+        }
+        </ion-row>
+        } @else {
+        <ion-row class="ion-justify-content-center">
+          @for (number of prize.number; track 'p_number'+$index) {
+          <ion-col size="auto" class="prize-col">
+            {{number}}
+          </ion-col>
+          }
+        </ion-row>
+        }
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content class="ion-text-center">
+    <div class="">{{prize.name}}</div>
+    <div class="">{{prize.reward | number: '1.2-2'}}</div>
+  </ion-card-content>
+</ion-card>
+}

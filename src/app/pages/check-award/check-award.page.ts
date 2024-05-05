@@ -1,27 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonLabel, IonRow, IonCol, IonText, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonLabel, IonRow, IonCol, IonText, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonInput, IonItem, IonList, IonGrid, IonFooter, IonNote, IonIcon } from '@ionic/angular/standalone';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { finalize, firstValueFrom, of } from 'rxjs';
+import { addIcons } from 'ionicons';
+import { searchSharp } from 'ionicons/icons';
+import { AwardCardComponent } from './components/award-card/award-card.component';
 
 @Component({
   selector: 'app-check-award',
   templateUrl: './check-award.page.html',
   styleUrls: ['./check-award.page.scss'],
   standalone: true,
-  imports: [IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonText, IonCol, IonRow, IonLabel, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HttpClientModule]
+  imports: [FormsModule, AwardCardComponent, IonIcon, IonNote, IonFooter, IonGrid, IonList, IonItem, IonInput, IonButton, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonText, IonCol, IonRow, IonLabel, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HttpClientModule]
 })
 export class CheckAwardPage implements OnInit {
   loading = false;
+
+  thePrizes: Prize[] | undefined;
 
   prize: Prize | undefined;
   runningNumbers: Prize[] | undefined;
   prizes: Prize[] | undefined;
 
+  input = '';
+  wonPrizes: Prize[] = [];
+
   constructor(
     private http: HttpClient,
   ) {
+    addIcons({ searchSharp });
     this.getData();
   }
 
@@ -33,12 +42,66 @@ export class CheckAwardPage implements OnInit {
     // this.http.get<ApiResponse>(`https://lotto.api.rayriffy.com/latest`).pipe(
     //   finalize(() => this.loading = false)
     // );
-    const data = await firstValueFrom(ofData);
+    const data = await firstValueFrom(ofData.pipe(
+      finalize(() => this.loading = false)
+    ));
+    console.clear();
     if (data.status == 'success') {
-      this.prize = data.response.prizes[0];
-      this.prizes = data.response.prizes.slice(1);
-      this.runningNumbers = data.response.runningNumbers;
+      this.thePrizes = [...data.response.prizes, ...data.response.runningNumbers];
+
+      if (this.thePrizes) {
+        this.prize = data.response.prizes[0];
+        this.prizes = data.response.prizes.slice(1);
+        this.runningNumbers = data.response.runningNumbers;
+      }
+
+      // console.log(`✨ ~ this.prize:`, this.prize);
+      // console.log(`✨ ~ this.runningNumbers:`, this.runningNumbers);
+      // console.log(`✨ ~ this.prizes:`, this.prizes);
+
+      this.checkWonPrizes();
     }
+  }
+
+  checkWonPrizes() {
+    // this.input = `980116, 104123,123833,123417, 980115, 622241, 980117`;
+    // this.input = '980116, 123123, 12312, 123123, 1231234, 980115, 980117, 062041, 268817, 083872, 179445, 002704, 070350, 013776, 086625, 165031, 274678, 763123, 123417';
+
+    const numberStrs = this.input.replace(/\s/g, '').split(',');
+    const uniqueNumbers = [...new Set(numberStrs)].filter(number => number.length === 6);
+
+    this.wonPrizes = [];
+    this.thePrizes?.forEach(prize => {
+      let wonNumbers: string[] = [];
+      // check รางวัลที่ 1, check รางวัลข้างเคียงรางวัลที่ 1, รางวัลที่ 2, รางวัลที่ 3, รางวัลที่ 4, รางวัลที่ 5
+      if (['prizeFirst', 'prizeFirstNear', 'prizeSecond', 'prizeThird', 'prizeForth', 'prizeFifth'].some(s => prize.id === s)) {
+        wonNumbers = prize.number.filter(num => uniqueNumbers.includes(num));
+      }
+
+      // รางวัลเลขหน้า 3 ตัว
+      if (prize.id === 'runningNumberFrontThree') {
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(0, 3)).includes(num));
+      }
+
+      // รางวัลเลขท้าย 3 ตัว
+      if (prize.id === 'runningNumberBackThree') {
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(3)).includes(num));
+      }
+
+      // รางวัลเลขท้าย 2 ตัว
+      if (prize.id === 'runningNumberBackTwo') {
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(5)).includes(num));
+      }
+
+      // console.log(`✨ ~ wonNumbers:`, wonNumbers);
+      if (wonNumbers.length) {
+        this.wonPrizes.push({
+          ...prize,
+          wonNumber: wonNumbers,
+        });
+      }
+    });
+    console.log(`✨ ~ this.wonPrizes:`, this.wonPrizes);
   }
 }
 
@@ -54,14 +117,14 @@ interface Response {
   runningNumbers: Prize[];
 }
 
-interface Prize {
+export interface Prize {
   id: string;
   name: string;
   reward: string;
   amount: number;
   number: string[];
+  wonNumber?: string[];
 }
-
 
 const ofData = of({
   "status": "success",
