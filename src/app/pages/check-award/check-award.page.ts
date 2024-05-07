@@ -64,6 +64,7 @@ export class CheckAwardPage implements OnInit {
   }
 
   checkWonPrizes() {
+    // this.input = `763123, 123833`;
     // this.input = `980116, 104123,123833,123417, 980115, 622241, 980117`;
     // this.input = '980116, 123123, 12312, 123123, 1231234, 980115, 980117, 062041, 268817, 083872, 179445, 002704, 070350, 013776, 086625, 165031, 274678, 763123, 123417';
 
@@ -74,23 +75,23 @@ export class CheckAwardPage implements OnInit {
     this.thePrizes?.forEach(prize => {
       let wonNumbers: string[] = [];
       // check รางวัลที่ 1, check รางวัลข้างเคียงรางวัลที่ 1, รางวัลที่ 2, รางวัลที่ 3, รางวัลที่ 4, รางวัลที่ 5
-      if (['prizeFirst', 'prizeFirstNear', 'prizeSecond', 'prizeThird', 'prizeForth', 'prizeFifth'].some(s => prize.id === s)) {
+      if (['prizeFirst', 'prizeFirstNear', 'prizeSecond', 'prizeThird', 'prizeForth', 'prizeFifth'].some(fullCheck => prize.id === fullCheck)) {
         wonNumbers = prize.number.filter(num => uniqueNumbers.includes(num));
       }
 
       // รางวัลเลขหน้า 3 ตัว
       if (prize.id === 'runningNumberFrontThree') {
-        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(0, 3)).includes(num));
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(uniqueNumber => uniqueNumber.slice(0, 3)).includes(num));
       }
 
       // รางวัลเลขท้าย 3 ตัว
       if (prize.id === 'runningNumberBackThree') {
-        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(3)).includes(num));
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(uniqueNumber => uniqueNumber.slice(3, 6)).includes(num));
       }
 
       // รางวัลเลขท้าย 2 ตัว
       if (prize.id === 'runningNumberBackTwo') {
-        wonNumbers = prize.number.filter(num => uniqueNumbers.map(unum => unum.slice(5)).includes(num));
+        wonNumbers = prize.number.filter(num => uniqueNumbers.map(uniqueNumber => uniqueNumber.slice(4, 6)).includes(num));
       }
 
       // console.log(`✨ ~ wonNumbers:`, wonNumbers);
@@ -101,7 +102,6 @@ export class CheckAwardPage implements OnInit {
         });
       }
     });
-    console.log(`✨ ~ this.wonPrizes:`, this.wonPrizes);
   }
 }
 

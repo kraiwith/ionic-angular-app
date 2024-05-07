@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'angular-app',
+  appId: 'bugkheiyb.sugarapple',
+  appName: 'Sugar Apple - บักเขียบ',
   webDir: 'www/browser'
 };
 

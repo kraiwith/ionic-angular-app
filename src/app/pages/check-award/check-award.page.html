@@ -20,7 +20,7 @@
         <ion-note class="ion-margin-horizontal ion-margin-vertical">
           @for (prize of wonPrizes; track prize.id) {
           <div class="">
-            <ion-text class="ion-margin-end"> <strong>{{prize.wonNumber}}</strong>
+            <ion-text class="ion-margin-end" color="success"> <strong>{{prize.wonNumber}}</strong>
               <br> ถูก{{prize.name}} มูลค่า {{prize.reward | number: '1.2-2'}} บาท
             </ion-text>
           </div>
